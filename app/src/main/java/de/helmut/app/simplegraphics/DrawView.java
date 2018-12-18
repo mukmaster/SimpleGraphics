@@ -10,6 +10,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
 
+import java.util.ArrayList;
+
 /**
  * DrawView enthält die Zeichenfunktionalität und ist eine View-Subklasse.
  * Das Zeichnen wird durch Aufruf der Methode onDraw ausgelöst.
@@ -18,13 +20,16 @@ public class DrawView extends View implements OnTouchListener {
 
     private static final String TAG = "DrawView";
 
+    // Die gewählten Punkte werden in einer ArrayList aufgezeichnet
+    ArrayList<Point> points = new ArrayList<Point>();
+
     // Die Eigenschaften des gezeichneten Objekts werden in einem Paint-Objekt gespeichert
     private Paint myPaint;
 
     // Die geometrischen Eigenschaften des Kreisobjekts
     private float mx = 300;
     private float my = 500;
-    private float radius = 200;
+    private float radius = 50;
 
     public DrawView(Context context) {
         super(context);
@@ -45,20 +50,26 @@ public class DrawView extends View implements OnTouchListener {
     */
     @Override
     public void onDraw(Canvas canvas) {
-        // Zeichne einen Kreis
-        canvas.drawCircle(mx, my, radius, myPaint);
+        // Zeichne Kreise um alle in der Point-Liste gespeicherten Punkte
+        for (Point p : points) {
+            canvas.drawCircle(p.mx,p.my, radius, myPaint);
+        }
     }
 
     public boolean onTouch(View view, MotionEvent event) {
 
-        // Die Koordinaten des Touch-Events holen und als Kreismittelpunkt speichern
-        mx = event.getX();
-        my = event.getY();
+        // Die Koordinaten des Touch-Events holen und in einer Point-Instanz speichern
+        Point point = new Point();
+        point.mx = event.getX();
+        point.my = event.getY();
+
+        // Und dann noch die Point-Instanz der Point-Liste hinzufügen
+        points.add(point);
 
         /* Die Zeichenfläche wird nur dann gezeichnet, wenn es notwendig ist. Der Aufruf von
            invalidate() teilt dem Android-System mit, dass dies der Fall ist.
         */
-        // invalidate();
+        invalidate();
 
         return true;
     }
