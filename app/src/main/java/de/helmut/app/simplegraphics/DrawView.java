@@ -21,7 +21,7 @@ public class DrawView extends View implements OnTouchListener {
     private static final String TAG = "DrawView";
 
     // Die gewählten Punkte werden in einer ArrayList aufgezeichnet
-    ArrayList<Point> points = new ArrayList<Point>();
+    ArrayList<Circle> circles = new ArrayList<Circle>();
 
     // Die Eigenschaften des gezeichneten Objekts werden in einem Paint-Objekt gespeichert
     private Paint myPaint;
@@ -50,9 +50,10 @@ public class DrawView extends View implements OnTouchListener {
     */
     @Override
     public void onDraw(Canvas canvas) {
-        // Zeichne Kreise um alle in der Point-Liste gespeicherten Punkte
-        for (Point p : points) {
-            canvas.drawCircle(p.mx,p.my, radius, myPaint);
+        // Zeichne alle in der Circle-Liste gespeicherten Kreise
+        for (Circle c : circles) {
+            myPaint.setColor(c.farbe);
+            canvas.drawCircle(c.mp.mx, c.mp.my, c.radius, myPaint);
         }
     }
 
@@ -63,12 +64,9 @@ public class DrawView extends View implements OnTouchListener {
         point.mx = event.getX();
         point.my = event.getY();
 
-        // Und dann noch die Point-Instanz der Point-Liste hinzufügen
-        points.add(point);
-
-        /* Die Zeichenfläche wird nur dann gezeichnet, wenn es notwendig ist. Der Aufruf von
-           invalidate() teilt dem Android-System mit, dass dies der Fall ist.
-        */
+        // Eine neue Circle-Instanz anlegen und in der Liste circles speichern
+        Circle circle = new Circle(point, 100, "");
+        circles.add(circle);
         invalidate();
 
         return true;
